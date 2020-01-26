@@ -5,7 +5,6 @@ var OFFER_DESCRIPTION = 'Хорошее и уютное жилье';
 var OFFER_MAX_PRICE = 100000;
 var OFFER_MAX_ROOM_AMOUNT = 3;
 var OFFER_MAX_GUEST_AMOUNT = 2;
-var OFFER_AMOUNT = 8;
 var OFFER_MIN_LOCATION_Y = 130;
 var OFFER_MAX_LOCATION_Y = 630;
 
@@ -37,6 +36,8 @@ var OFFER_PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
+var OFFER_AMOUNT = 8;
+
 var MAP_WIDTH = 1200;
 
 var PIN_OFFSET_X = -25;
@@ -44,8 +45,6 @@ var PIN_OFFSET_Y = -70;
 
 var pinTemplate = document.querySelector('#pin')
   .content.querySelector('.map__pin');
-
-var pinContainer = document.querySelector('.map__pins');
 
 var getRandomInt = function (maxInt) {
   return Math.floor(Math.random() * maxInt);
@@ -55,30 +54,33 @@ var getRandomIntFromRange = function (minInt, maxInt) {
   return getRandomInt(maxInt - minInt) + minInt;
 };
 
+var getRandomElement = function (array) {
+  return array[getRandomInt(array.length)];
+};
+
+var getRandomElements = function (array) {
+  var randomElements = [];
+  var elementsAmount = getRandomInt(array.length + 1);
+
+  for (var i = 0; i < elementsAmount; i++) {
+    randomElements.push(array[i]);
+  }
+
+  return randomElements;
+};
+
 var createRandomOffer = function (offerNumber) {
   var avatarSrc = 'img/avatars/user0' + offerNumber + '.png';
   var locationX = getRandomIntFromRange(0, MAP_WIDTH + 1);
   var locationY = getRandomIntFromRange(OFFER_MIN_LOCATION_Y, OFFER_MAX_LOCATION_Y + 1);
   var price = getRandomInt(OFFER_MAX_PRICE + 1);
-  var type = OFFER_TYPES[getRandomInt(OFFER_TYPES.length)];
+  var type = getRandomElement(OFFER_TYPES);
   var roomAmount = getRandomInt(OFFER_MAX_ROOM_AMOUNT + 1);
   var guestAmount = getRandomInt(OFFER_MAX_GUEST_AMOUNT + 1);
-  var checkinTime = OFFER_CHECKIN_CHECKOUT_TIMES[getRandomInt(OFFER_CHECKIN_CHECKOUT_TIMES.length)];
-  var checkoutTime = OFFER_CHECKIN_CHECKOUT_TIMES[getRandomInt(OFFER_CHECKIN_CHECKOUT_TIMES.length)];
-
-  var featureAmount = getRandomInt(OFFER_FEATURES.length + 1);
-  var features = [];
-
-  for (var i = 0; i < featureAmount; i++) {
-    features.push(OFFER_FEATURES[i]);
-  }
-
-  var photoAmount = getRandomInt(OFFER_PHOTOS.length + 1);
-  var photos = [];
-
-  for (i = 0; i < photoAmount; i++) {
-    photos.push(OFFER_PHOTOS[i]);
-  }
+  var checkinTime = getRandomElement(OFFER_CHECKIN_CHECKOUT_TIMES);
+  var checkoutTime = getRandomElement(OFFER_CHECKIN_CHECKOUT_TIMES);
+  var features = getRandomElements(OFFER_FEATURES);
+  var photos = getRandomElements(OFFER_PHOTOS);
 
   return {
     author: {
@@ -114,7 +116,11 @@ var createRandomOffers = function () {
   return offers;
 };
 
-var renderPin = function (offer) {
+var activateMap = function () {
+  document.querySelector('.map').classList.remove('map--faded');
+};
+
+var createPinElement = function (offer) {
   var pinElement = pinTemplate.cloneNode(true);
   var pinX = offer.offer.location.x + PIN_OFFSET_X;
   var pinY = offer.offer.location.y + PIN_OFFSET_Y;
@@ -131,10 +137,14 @@ var renderPins = function (offers) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < offers.length; i++) {
-    fragment.appendChild(renderPin(offers[i]));
+    fragment.appendChild(createPinElement(offers[i]));
   }
 
-  pinContainer.appendChild(fragment);
+  document.querySelector('.map__pins').appendChild(fragment);
 };
 
-renderPins(createRandomOffers());
+var offers = createRandomOffers();
+
+activateMap();
+
+renderPins(offers);
