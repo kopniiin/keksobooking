@@ -5,8 +5,6 @@ var OFFER_DESCRIPTION = 'Хорошее и уютное жилье';
 var OFFER_MAX_PRICE = 1000000;
 var OFFER_MAX_ROOM_AMOUNT = 3;
 var OFFER_MAX_GUEST_AMOUNT = 2;
-var OFFER_MIN_LOCATION_Y = 130;
-var OFFER_MAX_LOCATION_Y = 630;
 
 var OFFER_TYPES = [
   'palace',
@@ -43,6 +41,11 @@ var MAP_WIDTH = 1200;
 var PIN_OFFSET_X = -25;
 var PIN_OFFSET_Y = -70;
 
+var offerMinLocationX = 0 - PIN_OFFSET_X;
+var offerMaxLocationX = MAP_WIDTH + PIN_OFFSET_X;
+var OFFER_MIN_LOCATION_Y = 130;
+var OFFER_MAX_LOCATION_Y = 630;
+
 var getRandomInt = function (maxInt) {
   return Math.floor(Math.random() * maxInt);
 };
@@ -74,7 +77,7 @@ var getRandomElements = function (array) {
 };
 
 var createRandomOffer = function (offerNumber) {
-  var locationX = getRandomIntFromRangeIncludingMax(0, MAP_WIDTH);
+  var locationX = getRandomIntFromRangeIncludingMax(offerMinLocationX, offerMaxLocationX);
   var locationY = getRandomIntFromRangeIncludingMax(OFFER_MIN_LOCATION_Y, OFFER_MAX_LOCATION_Y);
 
   return {
