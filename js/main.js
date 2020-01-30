@@ -34,6 +34,10 @@ var OFFER_PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
+var OFFER_PHOTO_WIDTH = 45;
+var OFFER_PHOTO_HEIGHT = 40;
+var OFFER_PHOTO_ALT = 'Фотография жилья';
+
 var OFFER_AMOUNT = 8;
 
 var MAP_WIDTH = 1200;
@@ -89,7 +93,7 @@ var createRandomOffer = function (offerNumber) {
       address: locationX + ', ' + locationY,
       price: getRandomIntFromRangeIncludingMax(0, OFFER_MAX_PRICE),
       type: getRandomElement(OFFER_TYPES),
-      rooms: getRandomIntFromRangeIncludingMax(0, OFFER_MAX_ROOM_AMOUNT),
+      rooms: getRandomIntFromRangeIncludingMax(1, OFFER_MAX_ROOM_AMOUNT),
       guests: getRandomIntFromRangeIncludingMax(0, OFFER_MAX_GUEST_AMOUNT),
       checkin: getRandomElement(OFFER_CHECKIN_CHECKOUT_TIMES),
       checkout: getRandomElement(OFFER_CHECKIN_CHECKOUT_TIMES),
@@ -144,8 +148,97 @@ var renderPins = function (offers) {
   document.querySelector('.map__pins').appendChild(fragment);
 };
 
+var translateToRussian = function (englishWord) {
+  var translations = {
+    flat: 'Квартира',
+    bungalo: 'Бунгало',
+    house: 'Дом',
+    palace: 'Дворец'
+  };
+
+  return translations[englishWord];
+};
+
+var createFeatureElement = function (featureName) {
+  var featureElement = document.createElement('li');
+  featureElement.classList.add('popup__feature', 'popup__feature--' + featureName);
+
+  return featureElement;
+};
+
+var createPhotoElement = function (photoSrc) {
+  var photoElement = document.createElement('img');
+  photoElement.src = photoSrc;
+  photoElement.width = OFFER_PHOTO_WIDTH;
+  photoElement.height = OFFER_PHOTO_HEIGHT;
+  photoElement.alt = OFFER_PHOTO_ALT;
+
+  return photoElement;
+};
+
+var offerCardTemplate = document.querySelector('#card')
+  .content.querySelector('.map__card');
+
+var createOfferCard = function (offer) {
+  var offerCard = offerCardTemplate.cloneNode(true);
+
+  offerCard.querySelector('.popup__avatar')
+    .src = offer.author.avatar;
+  offerCard.querySelector('.popup__title')
+    .textContent = offer.offer.title;
+  offerCard.querySelector('.popup__text--address')
+    .textContent = offer.offer.address;
+  offerCard.querySelector('.popup__text--price')
+    .textContent = offer.offer.price + '₽/ночь';
+  offerCard.querySelector('.popup__type')
+    .textContent = translateToRussian(offer.offer.type);
+  offerCard.querySelector('.popup__text--capacity')
+    .textContent = offer.offer.rooms + ' комнаты для ' + offer.offer.guests + ' гостей';
+  offerCard.querySelector('.popup__text--time')
+    .textContent = 'Заезд после ' + offer.offer.checkin + ', выезд до ' + offer.offer.checkout;
+  offerCard.querySelector('.popup__description')
+    .textContent = offer.offer.description;
+
+  var featureContainer = offerCard.querySelector('.popup__features');
+  var offerFeatures = offer.offer.features;
+
+  if (offerFeatures.length === 0) {
+    offerCard.removeChild(featureContainer);
+  } else {
+    featureContainer.innerHTML = '';
+    for (var i = 0; i < offerFeatures.length; i++) {
+      featureContainer.appendChild(createFeatureElement(offerFeatures[i]));
+    }
+  }
+
+  var photoContainer = offerCard.querySelector('.popup__photos');
+  var offerPhotos = offer.offer.photos;
+
+  if (offerPhotos.length === 0) {
+    offerCard.removeChild(photoContainer);
+  } else {
+    photoContainer.innerHTML = '';
+    for (i = 0; i < offerPhotos.length; i++) {
+      photoContainer.appendChild(createPhotoElement(offerPhotos[i]));
+    }
+  }
+
+  return offerCard;
+};
+
+var renderOfferCard = function (offerCard) {
+  document.querySelector('.map').insertBefore(
+      offerCard,
+      document.querySelector('.map__filters-container')
+  );
+};
+
 var offers = createRandomOffers();
 
 activateMap();
 
 renderPins(offers);
+
+var offerCard = createOfferCard(offers[0]);
+
+renderOfferCard(offerCard);
