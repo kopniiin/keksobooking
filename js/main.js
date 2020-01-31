@@ -66,36 +66,26 @@ var getRandomElement = function (array) {
   return array[getRandomIntFromRange(0, array.length)];
 };
 
-var getRandomElements = function (array, elementAmount) {
+var extractRandomElement = function (array) {
+  var randomElementIndex = getRandomIntFromRange(0, array.length);
+  var randomElement = array[randomElementIndex];
+  array.splice(randomElementIndex, 1);
+
+  return randomElement;
+};
+
+var getRandomElements = function (array) {
   var arrayCopy = array.slice();
 
-  elementAmount = elementAmount ?
-    elementAmount :
-    getRandomIntFromRangeIncludingMax(0, arrayCopy.length);
+  var elementAmount = getRandomIntFromRangeIncludingMax(0, arrayCopy.length);
 
   var randomElements = [];
 
   for (var i = 0; i < elementAmount; i++) {
-    var randomElementIndex = getRandomIntFromRange(0, arrayCopy.length);
-    randomElements.push(arrayCopy[randomElementIndex]);
-    arrayCopy.splice(randomElementIndex, 1);
+    randomElements.push(extractRandomElement(arrayCopy));
   }
 
   return randomElements;
-};
-
-var shuffleElements = function (array) {
-  return getRandomElements(array, array.length);
-};
-
-var createRandomAvatars = function () {
-  var avatars = [];
-
-  for (var i = 1; i <= OFFER_AMOUNT; i++) {
-    avatars.push('img/avatars/user0' + i + '.png');
-  }
-
-  return shuffleElements(avatars);
 };
 
 var createRandomOffer = function (avatar) {
@@ -128,10 +118,15 @@ var createRandomOffer = function (avatar) {
 
 var createRandomOffers = function () {
   var offers = [];
-  var avatars = createRandomAvatars();
+  var avatars = [];
 
-  for (var i = 0; i < OFFER_AMOUNT; i++) {
-    offers.push(createRandomOffer(avatars[i]));
+  for (var i = 1; i <= OFFER_AMOUNT; i++) {
+    avatars.push('img/avatars/user0' + i + '.png');
+  }
+
+  for (i = 0; i < OFFER_AMOUNT; i++) {
+    var randomAvatar = extractRandomElement(avatars);
+    offers.push(createRandomOffer(randomAvatar));
   }
 
   return offers;
