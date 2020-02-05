@@ -41,9 +41,9 @@ var OFFER_PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
-var OFFER_PHOTO_WIDTH = 45;
+/* var OFFER_PHOTO_WIDTH = 45;
 var OFFER_PHOTO_HEIGHT = 40;
-var OFFER_PHOTO_ALT = 'Фотография жилья';
+var OFFER_PHOTO_ALT = 'Фотография жилья'; */
 
 var OFFER_AMOUNT = 8;
 
