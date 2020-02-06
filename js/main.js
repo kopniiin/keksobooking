@@ -34,9 +34,9 @@ var OFFER_PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
-var OFFER_PHOTO_WIDTH = 45;
+/* var OFFER_PHOTO_WIDTH = 45;
 var OFFER_PHOTO_HEIGHT = 40;
-var OFFER_PHOTO_ALT = 'Фотография жилья';
+var OFFER_PHOTO_ALT = 'Фотография жилья'; */
 
 var OFFER_AMOUNT = 8;
 
@@ -49,6 +49,18 @@ var offerMinLocationX = 0 - PIN_OFFSET_X;
 var offerMaxLocationX = MAP_WIDTH + PIN_OFFSET_X;
 var OFFER_MIN_LOCATION_Y = 130;
 var OFFER_MAX_LOCATION_Y = 630;
+
+var MAIN_PIN_WIDTH = 65;
+var MAIN_PIN_HEIGHT = 65;
+var MAIN_PIN_POINTER_HEIGHT = 22;
+
+var mainPinOffsetX = MAIN_PIN_WIDTH / -2;
+var mainPinOffsetY = MAIN_PIN_HEIGHT / -2;
+var mainPinWithPointerOffsetY = (MAIN_PIN_HEIGHT + MAIN_PIN_POINTER_HEIGHT) * -1;
+
+var LEFT_MOUSE_BUTTON_NUMBER = 0;
+
+var ENTER_KEY = 'Enter';
 
 var getRandomInt = function (maxInt) {
   return Math.floor(Math.random() * maxInt);
@@ -88,6 +100,7 @@ var getRandomElements = function (array) {
   return randomElements;
 };
 
+// Объявления
 var createRandomOffer = function (avatar) {
   var locationX = getRandomIntFromRangeIncludingMax(offerMinLocationX, offerMaxLocationX);
   var locationY = getRandomIntFromRangeIncludingMax(OFFER_MIN_LOCATION_Y, OFFER_MAX_LOCATION_Y);
@@ -132,10 +145,9 @@ var createRandomOffers = function () {
   return offers;
 };
 
-var activateMap = function () {
-  document.querySelector('.map').classList.remove('map--faded');
-};
+var randomOffers = createRandomOffers();
 
+// Пины
 var pinTemplate = document.querySelector('#pin')
   .content.querySelector('.map__pin');
 
@@ -162,7 +174,8 @@ var renderPins = function (offers) {
   document.querySelector('.map__pins').appendChild(fragment);
 };
 
-var translationMap = {
+// Карточка объявления
+/* var translationMap = {
   flat: 'Квартира',
   bungalo: 'Бунгало',
   house: 'Дом',
@@ -249,12 +262,144 @@ var renderOfferCard = function (offerCard) {
   );
 };
 
-var offers = createRandomOffers();
-
-activateMap();
-
-renderPins(offers);
-
 var offerCard = createOfferCard(offers[0]);
 
-renderOfferCard(offerCard);
+renderOfferCard(offerCard); */
+
+// Служебные функции
+var toggleFormElements = function (form, disable) {
+  for (var i = 0; i < form.elements.length; i++) {
+    form.elements[i].disabled = Boolean(disable);
+  }
+};
+
+// Карта
+var map = document.querySelector('.map');
+
+var activateMap = function () {
+  map.classList.remove('map--faded');
+};
+
+var deactivateMap = function () {
+  map.classList.add('map--faded');
+};
+
+// Главный пин
+var mainPin = map.querySelector('.map__pin--main');
+
+var getMainPinCoords = function (havePointer) {
+  var coordX = Math.round(
+      parseInt(mainPin.style.left, 10) - mainPinOffsetX
+  );
+
+  var leftTopCornerCoordY = parseInt(mainPin.style.top, 10);
+
+  var offsetY = havePointer ?
+    mainPinWithPointerOffsetY : mainPinOffsetY;
+
+  return {
+    x: coordX,
+    y: Math.round(leftTopCornerCoordY - offsetY)
+  };
+};
+
+var mainPinMousedownHandler = function (evt) {
+  if (evt.button === LEFT_MOUSE_BUTTON_NUMBER) {
+    activateApplication();
+  }
+};
+
+var mainPinKeydownHandler = function (evt) {
+  if (evt.key === ENTER_KEY) {
+    activateApplication();
+  }
+};
+
+// Форма фильтрации объявлений
+var offerFilteringForm = document.querySelector('.map__filters');
+
+var activateOfferFilteringForm = function () {
+  toggleFormElements(offerFilteringForm);
+};
+
+var deactivateOfferFilteringForm = function () {
+  toggleFormElements(offerFilteringForm, true);
+};
+
+// Форма создания объявления
+var offerCreationForm = document.querySelector('.ad-form');
+
+var addressField = offerCreationForm.elements.address;
+var roomAmountField = offerCreationForm.elements.rooms;
+var guestAmountField = offerCreationForm.elements.capacity;
+
+var fillAddressField = function (coords) {
+  addressField.value = coords.x + ', ' + coords.y;
+};
+
+var roomAmountsToMaxGuestAmountsMap = {
+  1: 1,
+  2: 2,
+  3: 3,
+  100: 0
+};
+
+var validateGuestAmountField = function () {
+  var guestAmountFieldMaxValidValue = roomAmountsToMaxGuestAmountsMap[roomAmountField.value];
+  var guestAmountFieldValue = parseInt(guestAmountField.value, 10);
+
+  var validityMessage = guestAmountFieldValue > guestAmountFieldMaxValidValue ?
+    'Максимальное допустимое количество гостей ' + guestAmountFieldMaxValidValue : '';
+
+  guestAmountField.setCustomValidity(validityMessage);
+};
+
+var offerCreationFormChangeHandler = function (evt) {
+  if (evt.target === roomAmountField || evt.target === guestAmountField) {
+    validateGuestAmountField();
+  }
+};
+
+var activateOfferCreationForm = function () {
+  offerCreationForm.classList.remove('ad-form--disabled');
+  offerCreationForm.addEventListener('change', offerCreationFormChangeHandler);
+  toggleFormElements(offerCreationForm);
+  validateGuestAmountField();
+};
+
+var deactivateOfferCreationForm = function () {
+  offerCreationForm.classList.add('ad-form--disabled');
+  offerCreationForm.removeEventListener('change', offerCreationFormChangeHandler);
+  toggleFormElements(offerCreationForm, true);
+};
+
+// Приложение
+var activateApplication = function () {
+  activateMap();
+  renderPins(randomOffers);
+  activateOfferFilteringForm();
+  activateOfferCreationForm();
+
+  var mainPinCoords = getMainPinCoords(true);
+  fillAddressField(mainPinCoords);
+
+  mainPin.removeEventListener('mousedown', mainPinMousedownHandler);
+  mainPin.removeEventListener('keydown', mainPinKeydownHandler);
+};
+
+var deactivateApplication = function () {
+  deactivateMap();
+  deactivateOfferCreationForm();
+  deactivateOfferFilteringForm();
+
+  var mainPinCoords = getMainPinCoords();
+  fillAddressField(mainPinCoords);
+
+  mainPin.addEventListener('mousedown', mainPinMousedownHandler);
+  mainPin.addEventListener('keydown', mainPinKeydownHandler);
+};
+
+deactivateApplication();
+
+mainPin.addEventListener('mousedown', mainPinMousedownHandler);
+mainPin.addEventListener('keydown', mainPinKeydownHandler);
