@@ -101,7 +101,12 @@
               <img src="img/muffin-grey.svg" alt="Аватар пользователя" width="40" height="44">
             </div>
             <div class="ad-form__field">
-              <input type="file" id="avatar" name="avatar" class="ad-form-header__input visually-hidden">
+              <input
+                type="file"
+                id="avatar"
+                name="avatar"
+                class="ad-form-header__input visually-hidden"
+                accept=".jpg, .png">
               <label class="ad-form-header__drop-zone" for="avatar">Загрузить<br>фото...</label>
             </div>
             <p class="ad-form-header__info">Заполните все обязательные поля, назначьте цену, загрузите фотографии. Придумайте интересное описание. Оно сделает объявление более живым и привлекательным. Получившееся объявление должно давать гостям полное представление о вашем жилье.</p>
@@ -109,11 +114,18 @@
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="title">Заголовок объявления</label>
-          <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка в центре Токио">
+          <input
+            id="title"
+            name="title"
+            type="text"
+            placeholder="Милая, уютная квартирка в центре Токио"
+            minlength="30"
+            maxlength="100"
+            required>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--wide">
           <label class="ad-form__label" for="address">Адрес</label>
-          <input id="address" name="address" type="text">
+          <input id="address" name="address" type="text" readonly>
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="type">Тип жилья</label>
@@ -126,7 +138,13 @@
         </fieldset>
         <fieldset class="ad-form__element">
           <label class="ad-form__label" for="price">Цена за ночь, руб.</label>
-          <input id="price" name="price" type="number" placeholder="5000">
+          <input
+            id="price"
+            name="price"
+            type="number"
+            placeholder="5000"
+            max="1000000"
+            required>
         </fieldset>
         <fieldset class="ad-form__element ad-form__element--time">
           <label class="ad-form__label" for="timein">Время заезда и выезда</label>
@@ -182,7 +200,12 @@
           <label class="ad-form__label">Фотография жилья</label>
           <div class="ad-form__photo-container">
             <div class="ad-form__upload">
-              <input type="file" id="images" name="images" class="ad-form__input visually-hidden">
+              <input
+                type="file"
+                id="images"
+                name="images"
+                class="ad-form__input visually-hidden"
+                accept=".jpg, .png">
               <label for="images" class="ad-form__drop-zone">Загрузить<br>фото...</label>
             </div>
             <div class="ad-form__photo"></div>
@@ -239,7 +262,9 @@
 
   <!-- Метка объявления -->
   <template id="pin">
-    <button type="button" class="map__pin" style="left: 200px; top: 400px;"><img src="img/avatars/user07.png" width="40" height="40" draggable="false" alt="Метка объявления"></button>
+    <button type="button" class="map__pin" style="left: 200px; top: 400px;">
+      <img src="img/avatars/user07.png" width="40" height="40" draggable="false" alt="Метка объявления">
+    </button>
   </template>
 
   <!-- Сообщение об успешном создании объявления -->

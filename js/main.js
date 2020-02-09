@@ -34,9 +34,9 @@ var OFFER_PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
-/* var OFFER_PHOTO_WIDTH = 45;
+var OFFER_PHOTO_WIDTH = 45;
 var OFFER_PHOTO_HEIGHT = 40;
-var OFFER_PHOTO_ALT = 'Фотография жилья'; */
+var OFFER_PHOTO_ALT = 'Фотография жилья';
 
 var OFFER_AMOUNT = 8;
 
@@ -62,6 +62,7 @@ var LEFT_MOUSE_BUTTON_NUMBER = 0;
 
 var ENTER_KEY = 'Enter';
 
+// Рандом
 var getRandomInt = function (maxInt) {
   return Math.floor(Math.random() * maxInt);
 };
@@ -151,15 +152,17 @@ var randomOffers = createRandomOffers();
 var pinTemplate = document.querySelector('#pin')
   .content.querySelector('.map__pin');
 
-var createPinElement = function (offer) {
+var createPinElement = function (offer, offerIndex) {
   var pinElement = pinTemplate.cloneNode(true);
   var pinX = offer.offer.location.x + PIN_OFFSET_X;
   var pinY = offer.offer.location.y + PIN_OFFSET_Y;
   pinElement.style = 'left: ' + pinX + 'px; top: ' + pinY + 'px;';
+  pinElement.dataset.offerIndex = offerIndex;
 
   var pinAvatar = pinElement.querySelector('img');
   pinAvatar.src = offer.author.avatar;
   pinAvatar.alt = offer.offer.title;
+  pinAvatar.style.pointerEvents = 'none';
 
   return pinElement;
 };
@@ -168,14 +171,14 @@ var renderPins = function (offers) {
   var fragment = document.createDocumentFragment();
 
   for (var i = 0; i < offers.length; i++) {
-    fragment.appendChild(createPinElement(offers[i]));
+    fragment.appendChild(createPinElement(offers[i], i));
   }
 
   document.querySelector('.map__pins').appendChild(fragment);
 };
 
 // Карточка объявления
-/* var translationMap = {
+var translationMap = {
   flat: 'Квартира',
   bungalo: 'Бунгало',
   house: 'Дом',
@@ -256,15 +259,28 @@ var createOfferCard = function (offer) {
 };
 
 var renderOfferCard = function (offerCard) {
-  document.querySelector('.map').insertBefore(
+  map.insertBefore(
       offerCard,
       document.querySelector('.map__filters-container')
   );
 };
 
-var offerCard = createOfferCard(offers[0]);
+var showCorrespondingOfferCard = function (pin) {
+  if (pin.classList.contains('map__pin--main')) {
+    return;
+  }
 
-renderOfferCard(offerCard); */
+  var offerCard = createOfferCard(randomOffers[pin.dataset.offerIndex]);
+  renderOfferCard(offerCard);
+};
+
+var hideCurrentOfferCard = function () {
+  var currentOfferCard = map.querySelector('.map__card');
+
+  if (currentOfferCard) {
+    map.removeChild(currentOfferCard);
+  }
+};
 
 // Служебные функции
 var toggleFormElements = function (form, disable) {
@@ -273,15 +289,28 @@ var toggleFormElements = function (form, disable) {
   }
 };
 
+var clearCustomValidity = function (field) {
+  field.setCustomValidity(' ');
+};
+
 // Карта
 var map = document.querySelector('.map');
 
+var mapClickHandler = function (evt) {
+  if (evt.target.classList.contains('map__pin')) {
+    hideCurrentOfferCard();
+    showCorrespondingOfferCard(evt.target);
+  }
+};
+
 var activateMap = function () {
   map.classList.remove('map--faded');
+  map.addEventListener('click', mapClickHandler);
 };
 
 var deactivateMap = function () {
   map.classList.add('map--faded');
+  map.removeEventListener('click', mapClickHandler);
 };
 
 // Главный пин
@@ -329,9 +358,14 @@ var deactivateOfferFilteringForm = function () {
 // Форма создания объявления
 var offerCreationForm = document.querySelector('.ad-form');
 
+var titleField = offerCreationForm.elements.title;
 var addressField = offerCreationForm.elements.address;
 var roomAmountField = offerCreationForm.elements.rooms;
 var guestAmountField = offerCreationForm.elements.capacity;
+var offerTypeField = offerCreationForm.elements.type;
+var priceField = offerCreationForm.elements.price;
+var checkinTimeField = offerCreationForm.elements.timein;
+var checkoutTimeField = offerCreationForm.elements.timeout;
 
 var fillAddressField = function (coords) {
   addressField.value = coords.x + ', ' + coords.y;
@@ -354,17 +388,74 @@ var validateGuestAmountField = function () {
   guestAmountField.setCustomValidity(validityMessage);
 };
 
+var offerTypesToMinPriceMap = {
+  palace: 10000,
+  flat: 1000,
+  house: 5000,
+  bungalo: 0
+};
+
+var validatePriceField = function () {
+  var offerTypeFieldValue = offerTypeField.value;
+  var priceFieldMinValidValue = offerTypesToMinPriceMap[offerTypeFieldValue];
+  var priceFieldValue = parseInt(priceField.value, 10);
+
+  priceField.placeholder = priceFieldMinValidValue;
+
+  var validityMessage = priceFieldValue < priceFieldMinValidValue ?
+    'Минимальная цена для типа жилья "' + translationMap[offerTypeFieldValue] +
+    '" ' + priceFieldMinValidValue + ' ₽/ночь' :
+    '';
+
+  priceField.setCustomValidity(validityMessage);
+};
+
+var validateTimeFields = function () {
+  var validityMessage = checkinTimeField.value !== checkoutTimeField.value ?
+    'Время выезда должно быть равным времени заезда' : '';
+
+  checkoutTimeField.setCustomValidity(validityMessage);
+};
+
+var validateTitleField = function () {
+  var validityMessage = '';
+
+  if (titleField.validity.valueMissing) {
+    validityMessage = 'Это поле обязательное';
+  }
+
+  if (titleField.validity.tooShort) {
+    validityMessage = 'Минимальная длина заголовка ' + titleField.getAttribute('minlength');
+  }
+
+  titleField.setCustomValidity(validityMessage);
+};
+
 var offerCreationFormChangeHandler = function (evt) {
   if (evt.target === roomAmountField || evt.target === guestAmountField) {
     validateGuestAmountField();
+  }
+
+  if (evt.target === offerTypeField || evt.target === priceField) {
+    validatePriceField();
+  }
+
+  if (evt.target === checkinTimeField || evt.target === checkoutTimeField) {
+    validateTimeFields();
+  }
+
+  if (evt.target === titleField) {
+    validateTitleField();
   }
 };
 
 var activateOfferCreationForm = function () {
   offerCreationForm.classList.remove('ad-form--disabled');
   offerCreationForm.addEventListener('change', offerCreationFormChangeHandler);
+  titleField.addEventListener('input', () => { clearCustomValidity(titleField); });
   toggleFormElements(offerCreationForm);
   validateGuestAmountField();
+  validateTitleField();
 };
 
 var deactivateOfferCreationForm = function () {
