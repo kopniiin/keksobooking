@@ -291,6 +291,7 @@ var closeCurrentOfferCard = function () {
 
 var offerCardKeydownHandler = function (evt) {
   if (evt.key === ESC_KEY) {
+    evt.preventDefault();
     closeCurrentOfferCard();
   }
 };
@@ -304,10 +305,6 @@ var toggleFormElements = function (form, disable) {
   for (var i = 0; i < form.elements.length; i++) {
     form.elements[i].disabled = Boolean(disable);
   }
-};
-
-var clearCustomValidity = function (field) {
-  field.setCustomValidity('');
 };
 
 // Карта
@@ -377,10 +374,10 @@ var offerCreationForm = document.querySelector('.ad-form');
 
 var titleField = offerCreationForm.elements.title;
 var addressField = offerCreationForm.elements.address;
-var roomAmountField = offerCreationForm.elements.rooms;
-var guestAmountField = offerCreationForm.elements.capacity;
 var offerTypeField = offerCreationForm.elements.type;
 var priceField = offerCreationForm.elements.price;
+var roomAmountField = offerCreationForm.elements.rooms;
+var guestAmountField = offerCreationForm.elements.capacity;
 var checkinTimeField = offerCreationForm.elements.timein;
 var checkoutTimeField = offerCreationForm.elements.timeout;
 
@@ -388,21 +385,10 @@ var fillAddressField = function (coords) {
   addressField.value = coords.x + ', ' + coords.y;
 };
 
-var roomAmountsToMaxGuestAmountsMap = {
-  1: 1,
-  2: 2,
-  3: 3,
-  100: 0
-};
-
-var validateGuestAmountField = function () {
-  var guestAmountFieldMaxValidValue = roomAmountsToMaxGuestAmountsMap[roomAmountField.value];
-  var guestAmountFieldValue = parseInt(guestAmountField.value, 10);
-
-  var validityMessage = guestAmountFieldValue > guestAmountFieldMaxValidValue ?
-    'Максимальное допустимое количество гостей ' + guestAmountFieldMaxValidValue : '';
-
-  guestAmountField.setCustomValidity(validityMessage);
+var checkTitleFieldValidity = function () {
+  return !titleField.validity.valueMissing &&
+    !titleField.validity.tooShort &&
+    !titleField.validity.tooLong;
 };
 
 var offerTypesToMinPriceMap = {
@@ -412,85 +398,102 @@ var offerTypesToMinPriceMap = {
   bungalo: 0
 };
 
-var validatePriceField = function () {
-  var offerTypeFieldValue = offerTypeField.value;
-  var priceFieldMinValidValue = offerTypesToMinPriceMap[offerTypeFieldValue];
+var checkPriceFieldValidity = function () {
+  var priceFieldMinValidValue = offerTypesToMinPriceMap[offerTypeField.value];
   var priceFieldValue = parseInt(priceField.value, 10);
 
-  priceField.placeholder = priceFieldMinValidValue;
-
-  var validityMessage = priceFieldValue < priceFieldMinValidValue ?
-    'Минимальная цена для типа жилья "' + translationMap[offerTypeFieldValue] +
-    '" ' + priceFieldMinValidValue + ' ₽/ночь' :
-    '';
-
-  priceField.setCustomValidity(validityMessage);
+  return priceFieldValue >= priceFieldMinValidValue;
 };
 
-var validateTimeFields = function () {
-  var validityMessage = checkinTimeField.value !== checkoutTimeField.value ?
-    'Время выезда должно быть равным времени заезда' : '';
-
-  checkoutTimeField.setCustomValidity(validityMessage);
+var changePriceFieldPlaceholder = function () {
+  priceField.placeholder = offerTypesToMinPriceMap[offerTypeField.value];
 };
 
-var validateTitleField = function () {
-  var validityMessage = '';
+var checkCheckoutTimeFieldValidity = function () {
+  return checkoutTimeField.value === checkinTimeField.value;
+};
 
-  if (titleField.validity.valueMissing) {
-    validityMessage = 'Это поле обязательное';
+var roomAmountsToMaxGuestAmountsMap = {
+  1: 1,
+  2: 2,
+  3: 3,
+  100: 0
+};
+
+var checkGuestAmountFieldValidity = function () {
+  var guestAmountFieldMaxValidValue = roomAmountsToMaxGuestAmountsMap[roomAmountField.value];
+  var guestAmountFieldValue = parseInt(guestAmountField.value, 10);
+
+  return guestAmountFieldValue <= guestAmountFieldMaxValidValue;
+};
+
+var checkFieldValidity = function (field) {
+  switch (field) {
+    case titleField:
+      return checkTitleFieldValidity();
+    case priceField:
+      return checkPriceFieldValidity();
+    case checkoutTimeField:
+      return checkCheckoutTimeFieldValidity();
+    case guestAmountField:
+      return checkGuestAmountFieldValidity();
+    default:
+      return true;
+  }
+};
+
+var validateChangedField = function (field) {
+  if (checkFieldValidity(field)) {
+    field.style.outline = null;
+  }
+};
+
+var validateFormBeforeSubmitting = function (evt) {
+  var isFormValid = true;
+
+  for (var i = 0; i < evt.target.elements.length; i++) {
+    var field = evt.target.elements[i];
+    var isFieldValid = checkFieldValidity(field);
+
+    if (!isFieldValid) {
+      isFormValid = false;
+    }
+
+    field.style.outline = isFieldValid ?
+      null : '4px dashed tomato';
   }
 
-  if (titleField.validity.tooShort) {
-    validityMessage = 'Минимальная длина заголовка ' + titleField.getAttribute('minlength');
+  if (!isFormValid) {
+    evt.preventDefault();
   }
-
-  if (titleField.validity.tooLong) {
-    validityMessage = 'Максимальная длина заголовка ' + titleField.getAttribute('maxlength');
-  }
-
-  titleField.setCustomValidity(validityMessage);
-};
-
-var titleFieldInputHandler = function () {
-  clearCustomValidity(titleField);
-};
-
-var priceFieldInputHandler = function () {
-  clearCustomValidity(priceField);
 };
 
 var offerCreationFormChangeHandler = function (evt) {
-  if (evt.target === roomAmountField || evt.target === guestAmountField) {
-    validateGuestAmountField();
+  if (evt.target === roomAmountField) {
+    changePriceFieldPlaceholder();
+    return;
   }
 
-  if (evt.target === offerTypeField || evt.target === priceField) {
-    validatePriceField();
-  }
+  validateChangedField(evt.target);
+};
 
-  if (evt.target === checkinTimeField || evt.target === checkoutTimeField) {
-    validateTimeFields();
-  }
-
-  if (evt.target === titleField) {
-    validateTitleField();
-  }
+var offerCreationFormSubmitHandler = function (evt) {
+  validateFormBeforeSubmitting(evt);
 };
 
 var activateOfferCreationForm = function () {
   offerCreationForm.classList.remove('ad-form--disabled');
+  offerCreationForm.setAttribute('novalidate', true);
   offerCreationForm.addEventListener('change', offerCreationFormChangeHandler);
-  titleField.addEventListener('input', titleFieldInputHandler);
-  priceField.addEventListener('input', priceFieldInputHandler);
+  offerCreationForm.addEventListener('submit', offerCreationFormSubmitHandler);
   toggleFormElements(offerCreationForm);
-  validateGuestAmountField();
-  validateTitleField();
 };
 
 var deactivateOfferCreationForm = function () {
   offerCreationForm.classList.add('ad-form--disabled');
+  offerCreationForm.setAttribute('novalidate', false);
   offerCreationForm.removeEventListener('change', offerCreationFormChangeHandler);
+  offerCreationForm.removeEventListener('submit', offerCreationFormSubmitHandler);
   toggleFormElements(offerCreationForm, true);
 };
 
