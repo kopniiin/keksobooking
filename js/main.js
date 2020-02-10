@@ -61,6 +61,7 @@ var mainPinWithPointerOffsetY = (MAIN_PIN_HEIGHT + MAIN_PIN_POINTER_HEIGHT) * -1
 var LEFT_MOUSE_BUTTON_NUMBER = 0;
 
 var ENTER_KEY = 'Enter';
+var ESC_KEY = 'Escape';
 
 // Рандом
 var getRandomInt = function (maxInt) {
@@ -255,6 +256,9 @@ var createOfferCard = function (offer) {
     offerCard.appendChild(photoContainer);
   }
 
+  offerCard.querySelector('.popup__close')
+    .addEventListener('click', offerCardCloseButtonClickHandler);
+
   return offerCard;
 };
 
@@ -265,21 +269,34 @@ var renderOfferCard = function (offerCard) {
   );
 };
 
-var showCorrespondingOfferCard = function (pin) {
+var showOfferCard = function (pin) {
   if (pin.classList.contains('map__pin--main')) {
     return;
   }
 
-  var offerCard = createOfferCard(randomOffers[pin.dataset.offerIndex]);
-  renderOfferCard(offerCard);
+  renderOfferCard(createOfferCard(randomOffers[pin.dataset.offerIndex]));
+
+  document.addEventListener('keydown', offerCardKeydownHandler);
 };
 
-var hideCurrentOfferCard = function () {
+var closeCurrentOfferCard = function () {
   var currentOfferCard = map.querySelector('.map__card');
 
   if (currentOfferCard) {
     map.removeChild(currentOfferCard);
+
+    document.removeEventListener('keydown', offerCardKeydownHandler);
   }
+};
+
+var offerCardKeydownHandler = function (evt) {
+  if (evt.key === ESC_KEY) {
+    closeCurrentOfferCard();
+  }
+};
+
+var offerCardCloseButtonClickHandler = function () {
+  closeCurrentOfferCard();
 };
 
 // Служебные функции
@@ -290,7 +307,7 @@ var toggleFormElements = function (form, disable) {
 };
 
 var clearCustomValidity = function (field) {
-  field.setCustomValidity(' ');
+  field.setCustomValidity('');
 };
 
 // Карта
@@ -298,8 +315,8 @@ var map = document.querySelector('.map');
 
 var mapClickHandler = function (evt) {
   if (evt.target.classList.contains('map__pin')) {
-    hideCurrentOfferCard();
-    showCorrespondingOfferCard(evt.target);
+    closeCurrentOfferCard();
+    showOfferCard(evt.target);
   }
 };
 
@@ -428,7 +445,19 @@ var validateTitleField = function () {
     validityMessage = 'Минимальная длина заголовка ' + titleField.getAttribute('minlength');
   }
 
+  if (titleField.validity.tooLong) {
+    validityMessage = 'Максимальная длина заголовка ' + titleField.getAttribute('maxlength');
+  }
+
   titleField.setCustomValidity(validityMessage);
+};
+
+var titleFieldInputHandler = function () {
+  clearCustomValidity(titleField);
+};
+
+var priceFieldInputHandler = function () {
+  clearCustomValidity(priceField);
 };
 
 var offerCreationFormChangeHandler = function (evt) {
@@ -452,7 +481,8 @@ var offerCreationFormChangeHandler = function (evt) {
 var activateOfferCreationForm = function () {
   offerCreationForm.classList.remove('ad-form--disabled');
   offerCreationForm.addEventListener('change', offerCreationFormChangeHandler);
-  titleField.addEventListener('input', () => { clearCustomValidity(titleField); });
+  titleField.addEventListener('input', titleFieldInputHandler);
+  priceField.addEventListener('input', priceFieldInputHandler);
   toggleFormElements(offerCreationForm);
   validateGuestAmountField();
   validateTitleField();
