@@ -256,9 +256,6 @@ var createOfferCard = function (offer) {
     offerCard.appendChild(photoContainer);
   }
 
-  offerCard.querySelector('.popup__close')
-    .addEventListener('click', offerCardCloseButtonClickHandler);
-
   return offerCard;
 };
 
@@ -274,7 +271,12 @@ var showOfferCard = function (pin) {
     return;
   }
 
-  renderOfferCard(createOfferCard(randomOffers[pin.dataset.offerIndex]));
+  var offerCard = createOfferCard(randomOffers[pin.dataset.offerIndex]);
+
+  offerCard.querySelector('.popup__close')
+    .addEventListener('click', offerCardCloseButtonClickHandler);
+
+  renderOfferCard(offerCard);
 
   document.addEventListener('keydown', offerCardKeydownHandler);
 };
@@ -370,25 +372,28 @@ var deactivateOfferFilteringForm = function () {
 };
 
 // Форма создания объявления
-var offerCreationForm = document.querySelector('.ad-form');
+var offerForm = document.querySelector('.ad-form');
+var offerFormFields = offerForm.elements;
 
-var titleField = offerCreationForm.elements.title;
-var addressField = offerCreationForm.elements.address;
-var offerTypeField = offerCreationForm.elements.type;
-var priceField = offerCreationForm.elements.price;
-var roomAmountField = offerCreationForm.elements.rooms;
-var guestAmountField = offerCreationForm.elements.capacity;
-var checkinTimeField = offerCreationForm.elements.timein;
-var checkoutTimeField = offerCreationForm.elements.timeout;
+var titleField = offerFormFields.title;
+var addressField = offerFormFields.address;
+var offerTypeField = offerFormFields.type;
+var priceField = offerFormFields.price;
+var roomAmountField = offerFormFields.rooms;
+var guestAmountField = offerFormFields.capacity;
+var checkinTimeField = offerFormFields.timein;
+var checkoutTimeField = offerFormFields.timeout;
 
 var fillAddressField = function (coords) {
   addressField.value = coords.x + ', ' + coords.y;
 };
 
 var checkTitleFieldValidity = function () {
-  return !titleField.validity.valueMissing &&
-    !titleField.validity.tooShort &&
-    !titleField.validity.tooLong;
+  var fieldValidity = titleField.validity;
+
+  return !fieldValidity.valueMissing &&
+    !fieldValidity.tooShort &&
+    !fieldValidity.tooLong;
 };
 
 var offerTypesToMinPriceMap = {
@@ -405,8 +410,14 @@ var checkPriceFieldValidity = function () {
   return priceFieldValue >= priceFieldMinValidValue;
 };
 
-var changePriceFieldPlaceholder = function () {
-  priceField.placeholder = offerTypesToMinPriceMap[offerTypeField.value];
+var changePriceFieldPlaceholder = function (placeholder) {
+  priceField.placeholder = placeholder;
+};
+
+var changePriceFieldMinValidValue = function () {
+  changePriceFieldPlaceholder(
+      offerTypesToMinPriceMap[offerTypeField.value]
+  );
 };
 
 var checkCheckoutTimeFieldValidity = function () {
@@ -442,59 +453,62 @@ var checkFieldValidity = function (field) {
   }
 };
 
+var toggleFieldValidity = function (field, isFieldInvalid) {
+  field.style.outline = isFieldInvalid ?
+    '4px dashed tomato' : null;
+};
+
 var validateChangedField = function (field) {
   if (checkFieldValidity(field)) {
-    field.style.outline = null;
+    toggleFieldValidity(field);
   }
 };
 
-var validateFormBeforeSubmitting = function (evt) {
+var validateForm = function () {
   var isFormValid = true;
 
-  for (var i = 0; i < evt.target.elements.length; i++) {
-    var field = evt.target.elements[i];
+  for (var i = 0; i < offerFormFields.length; i++) {
+    var field = offerFormFields[i];
     var isFieldValid = checkFieldValidity(field);
 
     if (!isFieldValid) {
       isFormValid = false;
+      toggleFieldValidity(field, true);
     }
-
-    field.style.outline = isFieldValid ?
-      null : '4px dashed tomato';
   }
 
-  if (!isFormValid) {
-    evt.preventDefault();
-  }
+  return isFormValid;
 };
 
-var offerCreationFormChangeHandler = function (evt) {
-  if (evt.target === roomAmountField) {
-    changePriceFieldPlaceholder();
+var offerFormChangeHandler = function (evt) {
+  if (evt.target === offerTypeField) {
+    changePriceFieldMinValidValue();
     return;
   }
 
   validateChangedField(evt.target);
 };
 
-var offerCreationFormSubmitHandler = function (evt) {
-  validateFormBeforeSubmitting(evt);
+var offerFormSubmitHandler = function (evt) {
+  if (!validateForm()) {
+    evt.preventDefault();
+  }
 };
 
-var activateOfferCreationForm = function () {
-  offerCreationForm.classList.remove('ad-form--disabled');
-  offerCreationForm.setAttribute('novalidate', true);
-  offerCreationForm.addEventListener('change', offerCreationFormChangeHandler);
-  offerCreationForm.addEventListener('submit', offerCreationFormSubmitHandler);
-  toggleFormElements(offerCreationForm);
+var activateOfferForm = function () {
+  offerForm.classList.remove('ad-form--disabled');
+  offerForm.setAttribute('novalidate', true);
+  offerForm.addEventListener('change', offerFormChangeHandler);
+  offerForm.addEventListener('submit', offerFormSubmitHandler);
+  toggleFormElements(offerForm);
 };
 
-var deactivateOfferCreationForm = function () {
-  offerCreationForm.classList.add('ad-form--disabled');
-  offerCreationForm.setAttribute('novalidate', false);
-  offerCreationForm.removeEventListener('change', offerCreationFormChangeHandler);
-  offerCreationForm.removeEventListener('submit', offerCreationFormSubmitHandler);
-  toggleFormElements(offerCreationForm, true);
+var deactivateOfferForm = function () {
+  offerForm.classList.add('ad-form--disabled');
+  offerForm.setAttribute('novalidate', false);
+  offerForm.removeEventListener('change', offerFormChangeHandler);
+  offerForm.removeEventListener('submit', offerFormSubmitHandler);
+  toggleFormElements(offerForm, true);
 };
 
 // Приложение
@@ -502,7 +516,7 @@ var activateApplication = function () {
   activateMap();
   renderPins(randomOffers);
   activateOfferFilteringForm();
-  activateOfferCreationForm();
+  activateOfferForm();
 
   var mainPinCoords = getMainPinCoords(true);
   fillAddressField(mainPinCoords);
@@ -513,7 +527,7 @@ var activateApplication = function () {
 
 var deactivateApplication = function () {
   deactivateMap();
-  deactivateOfferCreationForm();
+  deactivateOfferForm();
   deactivateOfferFilteringForm();
 
   var mainPinCoords = getMainPinCoords();
