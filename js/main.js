@@ -453,15 +453,9 @@ var checkFieldValidity = function (field) {
   }
 };
 
-var toggleFieldValidity = function (field, isFieldInvalid) {
-  field.style.outline = isFieldInvalid ?
-    '4px dashed tomato' : null;
-};
-
-var validateChangedField = function (field) {
-  if (checkFieldValidity(field)) {
-    toggleFieldValidity(field);
-  }
+var toggleFieldHighlighting = function (field, off) {
+  field.style.outline = off ?
+    null : '4px dashed tomato';
 };
 
 var validateForm = function () {
@@ -473,20 +467,20 @@ var validateForm = function () {
 
     if (!isFieldValid) {
       isFormValid = false;
-      toggleFieldValidity(field, true);
+      toggleFieldHighlighting(field);
     }
   }
 
   return isFormValid;
 };
 
-var offerFormChangeHandler = function (evt) {
+var offerFormInputHandler = function (evt) {
   if (evt.target === offerTypeField) {
     changePriceFieldMinValidValue();
     return;
   }
 
-  validateChangedField(evt.target);
+  toggleFieldHighlighting(evt.target, true);
 };
 
 var offerFormSubmitHandler = function (evt) {
@@ -498,7 +492,7 @@ var offerFormSubmitHandler = function (evt) {
 var activateOfferForm = function () {
   offerForm.classList.remove('ad-form--disabled');
   offerForm.setAttribute('novalidate', true);
-  offerForm.addEventListener('change', offerFormChangeHandler);
+  offerForm.addEventListener('input', offerFormInputHandler);
   offerForm.addEventListener('submit', offerFormSubmitHandler);
   toggleFormElements(offerForm);
 };
@@ -506,7 +500,7 @@ var activateOfferForm = function () {
 var deactivateOfferForm = function () {
   offerForm.classList.add('ad-form--disabled');
   offerForm.setAttribute('novalidate', false);
-  offerForm.removeEventListener('change', offerFormChangeHandler);
+  offerForm.removeEventListener('input', offerFormInputHandler);
   offerForm.removeEventListener('submit', offerFormSubmitHandler);
   toggleFormElements(offerForm, true);
 };
