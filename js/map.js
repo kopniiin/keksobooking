@@ -4,9 +4,8 @@
   var map = document.querySelector('.map');
 
   var mapClickHandler = function (evt) {
-    if (evt.target.classList.contains('map__pin')) {
-      window.offerCard.closeCurrent();
-      window.offerCard.show(evt.target);
+    if (evt.target.dataset.offerIndex) {
+      window.app.notify(evt.target, evt.type);
     }
   };
 

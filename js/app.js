@@ -26,6 +26,24 @@
     mainPin.addEventListener('keydown', mainPinKeydownHandler);
   };
 
+  var handleClickNotification = function (target) {
+    var offerIndex = target.dataset.offerIndex;
+
+    if (offerIndex) {
+      window.offerCard.closeCurrent();
+
+      window.offerCard.show(
+          window.offersData.get()[offerIndex]
+      );
+    }
+  };
+
+  var notify = function (target, event) {
+    if (event === 'click') {
+      handleClickNotification(target);
+    }
+  };
+
   var mainPinMousedownHandler = function (evt) {
     if (window.utils.checkLeftMouseButton(evt.button)) {
       activate();
@@ -42,5 +60,9 @@
 
   mainPin.addEventListener('mousedown', mainPinMousedownHandler);
   mainPin.addEventListener('keydown', mainPinKeydownHandler);
+
+  window.app = {
+    notify: notify
+  };
 })();
 

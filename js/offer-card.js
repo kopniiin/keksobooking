@@ -90,14 +90,8 @@
     );
   };
 
-  var show = function (pin) {
-    if (pin.classList.contains('map__pin--main')) {
-      return;
-    }
-
-    var card = create(
-        window.offersData.get()[pin.dataset.offerIndex]
-    );
+  var show = function (offer) {
+    var card = create(offer);
 
     card.querySelector('.popup__close')
       .addEventListener('click', closeButtonClickHandler);
