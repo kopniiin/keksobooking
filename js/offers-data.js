@@ -1,17 +1,14 @@
 'use strict';
 
 (function () {
-  var minLocationX = 0 - window.constants.pinOffsetX;
-  var maxLocationX = window.constants.mapWidth + window.constants.pinOffsetX;
-
   var createOffer = function (avatar) {
     var locationX = window.utils.getRandomIntFromRangeIncludingMax(
-        minLocationX,
-        maxLocationX
+        window.constants.offerLocationLimits.minX,
+        window.constants.offerLocationLimits.maxX
     );
     var locationY = window.utils.getRandomIntFromRangeIncludingMax(
-        window.constants.offerMinLocationY,
-        window.constants.offerMaxLocationY
+        window.constants.offerLocationLimits.minY,
+        window.constants.offerLocationLimits.maxY
     );
 
     return {

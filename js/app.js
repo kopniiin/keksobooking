@@ -9,7 +9,7 @@
     window.filterForm.activate();
     window.offerForm.activate();
 
-    window.offerForm.fillAddressField(window.mainPin.getCoords(true));
+    window.offerForm.fillAddressField(window.mainPin.getLocation(true));
 
     mainPin.removeEventListener('mousedown', mainPinMousedownHandler);
     mainPin.removeEventListener('keydown', mainPinKeydownHandler);
@@ -20,7 +20,7 @@
     window.filterForm.deactivate();
     window.offerForm.deactivate();
 
-    window.offerForm.fillAddressField(window.mainPin.getCoords());
+    window.offerForm.fillAddressField(window.mainPin.getLocation());
 
     mainPin.addEventListener('mousedown', mainPinMousedownHandler);
     mainPin.addEventListener('keydown', mainPinKeydownHandler);
@@ -38,9 +38,19 @@
     }
   };
 
+  var handleMousemoveNotification = function (target) {
+    if (target === mainPin) {
+      window.offerForm.fillAddressField(window.mainPin.getLocation(true));
+    }
+  };
+
   var notify = function (target, event) {
     if (event === 'click') {
       handleClickNotification(target);
+    }
+
+    if (event === 'mousemove') {
+      handleMousemoveNotification(target);
     }
   };
 
