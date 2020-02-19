@@ -8,21 +8,33 @@
 
   var MAP_WIDTH = 1200;
 
-  var PIN_OFFSET_X = -25;
-  var PIN_OFFSET_Y = -70;
-
-  var MAIN_PIN_WIDTH = 65;
-  var MAIN_PIN_HEIGHT = 65;
-  var MAIN_PIN_POINTER_HEIGHT = 22;
-
-  var OFFER_MIN_LOCATION_Y = 130;
-  var OFFER_MAX_LOCATION_Y = 630;
-
   var OFFER_TITLE = 'Объявление о жилье';
   var OFFER_DESCRIPTION = 'Хорошее и уютное жилье';
   var OFFER_MAX_PRICE = 1000000;
   var OFFER_MAX_ROOM_AMOUNT = 3;
   var OFFER_MAX_GUEST_AMOUNT = 2;
+
+  var offerMinLocationX = 0;
+  var offerMaxLocationX = MAP_WIDTH;
+  var OFFER_MIN_LOCATION_Y = 130;
+  var OFFER_MAX_LOCATION_Y = 630;
+
+  var MAIN_PIN_WIDTH = 65;
+  var MAIN_PIN_HEIGHT = 65;
+  var MAIN_PIN_POINTER_HEIGHT = 22;
+
+  var mainPinOffsetX = MAIN_PIN_WIDTH / -2;
+  var mainPinWithoutPointerOffsetY = MAIN_PIN_HEIGHT / -2;
+  var mainPinWithPointerOffsetY =
+    (MAIN_PIN_HEIGHT + MAIN_PIN_POINTER_HEIGHT) * -1;
+
+  var mainPinMinX = mainPinOffsetX;
+  var mainPinMaxX = MAP_WIDTH + mainPinOffsetX;
+  var mainPinMinY = OFFER_MIN_LOCATION_Y + mainPinWithPointerOffsetY;
+  var mainPinMaxY = OFFER_MAX_LOCATION_Y + mainPinWithPointerOffsetY;
+
+  var PIN_OFFSET_X = -25;
+  var PIN_OFFSET_Y = -70;
 
   var OFFER_TYPES = [
     'palace',
@@ -66,15 +78,6 @@
 
     mapWidth: MAP_WIDTH,
 
-    pinOffsetX: PIN_OFFSET_X,
-    pinOffsetY: PIN_OFFSET_Y,
-
-    mainPinWidth: MAIN_PIN_WIDTH,
-    mainPinHeight: MAIN_PIN_HEIGHT,
-    mainPinPointerHeight: MAIN_PIN_POINTER_HEIGHT,
-
-    offerMinLocationY: OFFER_MIN_LOCATION_Y,
-    offerMaxLocationY: OFFER_MAX_LOCATION_Y,
     offerTitle: OFFER_TITLE,
     offerDescription: OFFER_DESCRIPTION,
     offerMaxPrice: OFFER_MAX_PRICE,
@@ -89,5 +92,29 @@
     offerPhotoWidth: OFFER_PHOTO_WIDTH,
     offerPhotoHeight: OFFER_PHOTO_HEIGHT,
     offerPhotoAlt: OFFER_PHOTO_ALT,
+
+    OfferLocationLimits: {
+      MIN_X: offerMinLocationX,
+      MAX_X: offerMaxLocationX,
+      MIN_Y: OFFER_MIN_LOCATION_Y,
+      MAX_Y: OFFER_MAX_LOCATION_Y
+    },
+
+    mainPinWidth: MAIN_PIN_WIDTH,
+    mainPinHeight: MAIN_PIN_HEIGHT,
+    mainPinPointerHeight: MAIN_PIN_POINTER_HEIGHT,
+    mainPinOffsetX: mainPinOffsetX,
+    mainPinWithoutPointerOffsetY: mainPinWithoutPointerOffsetY,
+    mainPinWithPointerOffsetY: mainPinWithPointerOffsetY,
+
+    MainPinCoordsLimits: {
+      MIN_X: mainPinMinX,
+      MAX_X: mainPinMaxX,
+      MIN_Y: mainPinMinY,
+      MAX_Y: mainPinMaxY
+    },
+
+    pinOffsetX: PIN_OFFSET_X,
+    pinOffsetY: PIN_OFFSET_Y
   };
 })();
