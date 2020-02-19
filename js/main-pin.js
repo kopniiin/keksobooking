@@ -1,6 +1,7 @@
 'use strict';
 
 (function () {
+  var map = document.querySelector('.map');
   var mainPin = document.querySelector('.map__pin--main');
 
   var getLocation = function (havePointer) {
@@ -28,16 +29,21 @@
     var x = coords.x;
     var y = coords.y;
 
-    if (x < window.constants.mainPinCoordsLimits.minX) {
-      x = window.constants.mainPinCoordsLimits.minX;
-    } else if (x > window.constants.mainPinCoordsLimits.maxX) {
-      x = window.constants.mainPinCoordsLimits.maxX;
+    var minX = window.constants.MainPinCoordsLimits.MIN_X;
+    var maxX = window.constants.MainPinCoordsLimits.MAX_X;
+    var minY = window.constants.MainPinCoordsLimits.MIN_Y;
+    var maxY = window.constants.MainPinCoordsLimits.MAX_Y;
+
+    if (x < minX) {
+      x = minX;
+    } else if (x > maxX) {
+      x = maxX;
     }
 
-    if (y < window.constants.mainPinCoordsLimits.minY) {
-      y = window.constants.mainPinCoordsLimits.minY;
-    } else if (y > window.constants.mainPinCoordsLimits.maxY) {
-      y = window.constants.mainPinCoordsLimits.maxY;
+    if (y < minY) {
+      y = minY;
+    } else if (y > maxY) {
+      y = maxY;
     }
 
     return {
@@ -72,11 +78,11 @@
     };
 
     var mainPinMouseupHandler = function () {
-      document.removeEventListener('mousemove', mainPinMousemoveHandler);
+      map.removeEventListener('mousemove', mainPinMousemoveHandler);
       window.removeEventListener('mouseup', mainPinMouseupHandler);
     };
 
-    document.addEventListener('mousemove', mainPinMousemoveHandler);
+    map.addEventListener('mousemove', mainPinMousemoveHandler);
     window.addEventListener('mouseup', mainPinMouseupHandler);
   };
 

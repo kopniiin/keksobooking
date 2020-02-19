@@ -93,11 +93,11 @@
     offerPhotoHeight: OFFER_PHOTO_HEIGHT,
     offerPhotoAlt: OFFER_PHOTO_ALT,
 
-    offerLocationLimits: {
-      minX: offerMinLocationX,
-      maxX: offerMaxLocationX,
-      minY: OFFER_MIN_LOCATION_Y,
-      maxY: OFFER_MAX_LOCATION_Y
+    OfferLocationLimits: {
+      MIN_X: offerMinLocationX,
+      MAX_X: offerMaxLocationX,
+      MIN_Y: OFFER_MIN_LOCATION_Y,
+      MAX_Y: OFFER_MAX_LOCATION_Y
     },
 
     mainPinWidth: MAIN_PIN_WIDTH,
@@ -107,11 +107,11 @@
     mainPinWithoutPointerOffsetY: mainPinWithoutPointerOffsetY,
     mainPinWithPointerOffsetY: mainPinWithPointerOffsetY,
 
-    mainPinCoordsLimits: {
-      minX: mainPinMinX,
-      maxX: mainPinMaxX,
-      minY: mainPinMinY,
-      maxY: mainPinMaxY
+    MainPinCoordsLimits: {
+      MIN_X: mainPinMinX,
+      MAX_X: mainPinMaxX,
+      MIN_Y: mainPinMinY,
+      MAX_Y: mainPinMaxY
     },
 
     pinOffsetX: PIN_OFFSET_X,

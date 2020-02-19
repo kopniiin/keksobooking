@@ -3,12 +3,12 @@
 (function () {
   var createOffer = function (avatar) {
     var locationX = window.utils.getRandomIntFromRangeIncludingMax(
-        window.constants.offerLocationLimits.minX,
-        window.constants.offerLocationLimits.maxX
+        window.constants.OfferLocationLimits.MIN_X,
+        window.constants.OfferLocationLimits.MAX_X
     );
     var locationY = window.utils.getRandomIntFromRangeIncludingMax(
-        window.constants.offerLocationLimits.minY,
-        window.constants.offerLocationLimits.maxY
+        window.constants.OfferLocationLimits.MIN_Y,
+        window.constants.OfferLocationLimits.MAX_Y
     );
 
     return {
