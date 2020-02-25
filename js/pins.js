@@ -8,8 +8,8 @@
 
   var createElement = function (offer, offerIndex) {
     var element = template.cloneNode(true);
-    var pinX = offer.offer.location.x + window.constants.pinOffsetX;
-    var pinY = offer.offer.location.y + window.constants.pinOffsetY;
+    var pinX = offer.location.x + window.constants.pinOffsetX;
+    var pinY = offer.location.y + window.constants.pinOffsetY;
     element.style.left = pinX + 'px';
     element.style.top = pinY + 'px';
     element.dataset.offerIndex = offerIndex;
@@ -25,7 +25,7 @@
   var render = function (offers) {
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < offers.length; i++) {
+    for (var i = 0; i < window.constants.maxPinsAmount; i++) {
       fragment.appendChild(createElement(offers[i], i));
     }
 

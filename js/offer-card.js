@@ -26,13 +26,6 @@
 
   var map = document.querySelector('.map');
 
-  var typesToRussianTranslations = {
-    flat: 'Квартира',
-    bungalo: 'Бунгало',
-    house: 'Дом',
-    palace: 'Дворец'
-  };
-
   var create = function (offer) {
     var card = template.cloneNode(true);
 
@@ -45,7 +38,7 @@
     card.querySelector('.popup__text--price')
       .textContent = offer.offer.price + '₽/ночь';
     card.querySelector('.popup__type')
-      .textContent = typesToRussianTranslations[offer.offer.type];
+      .textContent = window.constants.offerTypesToRussianTranslations[offer.offer.type];
     card.querySelector('.popup__text--capacity')
       .textContent = offer.offer.rooms + ' комнаты для ' + offer.offer.guests + ' гостей';
     card.querySelector('.popup__text--time')
