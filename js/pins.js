@@ -25,7 +25,7 @@
   var render = function (offers) {
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < window.constants.maxPinsAmount; i++) {
+    for (var i = 0; i < offers.length; i++) {
       fragment.appendChild(createElement(offers[i], i));
     }
 

@@ -5,14 +5,12 @@
 
   var offers = [];
 
-  var addOffers = function (newOffers) {
-    newOffers.forEach(function (offer) {
-      offers.push(offer);
-    });
+  var saveOffers = function (newOffers) {
+    offers = newOffers;
   };
 
   var loadSuccessHandler = function (newOffers) {
-    addOffers(newOffers);
+    saveOffers(newOffers);
     window.pins.render(offers);
   };
 
