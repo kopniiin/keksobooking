@@ -8,6 +8,7 @@
   };
 
   var deactivate = function () {
+    form.reset();
     window.utils.toggleFormFields(form, true);
   };
 

@@ -1,50 +1,78 @@
 'use strict';
 
 (function () {
-  var createElement = function () {
-    var element = document.createElement('div');
-    element.style.position = 'fixed';
-    element.style.top = '20px';
-    element.style.left = '50%';
-    element.style.zIndex = '20';
+  var successMessageTemplate = document.querySelector('#success')
+    .content.querySelector('.success');
+  var errorMessageTemplate = document.querySelector('#error')
+    .content.querySelector('.error');
 
-    element.style.display = 'none';
-    element.style.borderRadius = '10px';
-    element.style.padding = '20px';
+  var successMessage = successMessageTemplate.cloneNode(true);
+  var errorMessage = errorMessageTemplate.cloneNode(true);
 
-    element.style.fontSize = '20px';
-    element.style.color = '#ffffff';
+  var successMessageText = successMessage.querySelector('.success__message');
+  var errorMessageText = errorMessage.querySelector('.error__message');
 
-    element.style.transform = 'translateX(-50%)';
-
-    return element;
-  };
-
-  var element = createElement();
-
-  var render = function () {
-    document.body.appendChild(element);
-  };
+  var closeButton = errorMessage.querySelector('.error__button');
 
   var hide = function () {
-    element.style.display = 'none';
+    successMessage.style.display = 'none';
+    errorMessage.style.display = 'none';
+
+    document.removeEventListener('keydown', messageKeydownHandler);
   };
 
-  var timerID;
+  var successMessageClickHandler = function (evt) {
+    if (evt.target === successMessage) {
+      hide();
+    }
+  };
+
+  var errorMessageClickHandler = function (evt) {
+    if (evt.target === errorMessage) {
+      hide();
+    }
+  };
+
+  successMessage.addEventListener('click', successMessageClickHandler);
+  errorMessage.addEventListener('click', errorMessageClickHandler);
+
+  var closeButtonClickHandler = function () {
+    hide();
+  };
+
+  closeButton.addEventListener('click', closeButtonClickHandler);
+
+  var messageKeydownHandler = function (evt) {
+    if (window.utils.checkEscKey(evt.key)) {
+      evt.preventDefault();
+      hide();
+    }
+  };
+
+  var showSuccessMessage = function (text) {
+    successMessage.style.display = 'block';
+    successMessageText.textContent = text;
+  };
+
+  var showErrorMessage = function (text) {
+    errorMessage.style.display = 'block';
+    errorMessageText.textContent = text;
+  };
 
   var show = function (text, isError) {
-    element.textContent = text;
+    if (isError) {
+      showErrorMessage(text);
+    } else {
+      showSuccessMessage(text);
+    }
 
-    element.style.backgroundColor = isError ?
-      'red' : 'green';
-
-    element.style.display = 'block';
-
-    clearTimeout(timerID);
-    timerID = setTimeout(hide, window.constants.timeToHideMessage);
+    document.addEventListener('keydown', messageKeydownHandler);
   };
 
-  render();
+  successMessage.style.display = 'none';
+  errorMessage.style.display = 'none';
+
+  document.querySelector('main').append(successMessage, errorMessage);
 
   window.message = {
     show: show

@@ -3,7 +3,7 @@
 (function () {
   var load = function (successHandler, errorHandler) {
     window.serverRequest.send({
-      url: window.constants.serverUrl.LOAD,
+      url: window.constants.ServerUrl.LOAD,
       successHandler: successHandler,
       errorHandler: errorHandler
     });
@@ -11,7 +11,7 @@
 
   var save = function (data, successHandler, errorHandler) {
     window.serverRequest.send({
-      url: window.constants.serverUrl.SAVE,
+      url: window.constants.ServerUrl.SAVE,
       data: data,
       successHandler: successHandler,
       errorHandler: errorHandler

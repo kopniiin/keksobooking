@@ -9,7 +9,7 @@
     var errorHandler = parameters.errorHandler;
 
     var xhrLoadHandler = function () {
-      if (xhr.status === window.constants.serverResponseStatusCode.OK) {
+      if (xhr.status === window.constants.ServerResponseStatusCode.OK) {
         successHandler(xhr.response);
       } else {
         errorHandler(

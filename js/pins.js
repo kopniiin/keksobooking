@@ -22,17 +22,36 @@
     return element;
   };
 
+  var pins = [];
+
+  var createPins = function (offers) {
+    pins = offers.map(function (offer, index) {
+      return createElement(offer, index);
+    });
+  };
+
   var render = function (offers) {
+    if (!pins.length) {
+      createPins(offers);
+    }
+
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < offers.length; i++) {
-      fragment.appendChild(createElement(offers[i], i));
-    }
+    pins.forEach(function (pin) {
+      fragment.appendChild(pin);
+    });
 
     pinsContainer.appendChild(fragment);
   };
 
+  var hide = function () {
+    pins.forEach(function (pin) {
+      pinsContainer.removeChild(pin);
+    });
+  };
+
   window.pins = {
-    render: render
+    render: render,
+    hide: hide
   };
 })();
