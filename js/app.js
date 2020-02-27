@@ -2,8 +2,10 @@
 
 (function () {
   var mainPin = document.querySelector('.map__pin--main');
+  var offerForm = document.querySelector('.ad-form');
 
   var offers = [];
+  var areOffersLoaded = false;
 
   var saveOffers = function (newOffers) {
     offers = newOffers;
@@ -11,19 +13,46 @@
 
   var loadSuccessHandler = function (newOffers) {
     saveOffers(newOffers);
+
     window.pins.render(offers);
+    window.filterForm.activate();
   };
 
-  var loadErrorHandler = function (errorMessage) {
+  var loadErrorHandler = function () {
+    saveOffers([]);
+  };
+
+  var saveSuccessHandler = function () {
+    window.message.show('Объявление успешно размещено');
+    deactivate();
+  };
+
+  var saveErrorHandler = function (errorMessage) {
     window.message.show(errorMessage, true);
+  };
+
+  var resetOfferLocation = function () {
+    var offerInitialLocation = {
+      x: window.constants.OfferInitialLocation.X,
+      y: window.constants.OfferInitialLocation.Y
+    };
+
+    window.mainPin.setLocation(offerInitialLocation);
+    window.offerForm.fillAddressField(offerInitialLocation);
   };
 
   var activate = function () {
     window.map.activate();
-    window.backend.load(loadSuccessHandler, loadErrorHandler);
-    window.filterForm.activate();
-    window.offerForm.activate();
 
+    if (!areOffersLoaded) {
+      window.backend.load(loadSuccessHandler, loadErrorHandler);
+      areOffersLoaded = true;
+    } else if (offers.length) {
+      window.pins.render(offers);
+      window.filterForm.activate();
+    }
+
+    window.offerForm.activate();
     window.offerForm.fillAddressField(window.mainPin.getLocation(true));
 
     mainPin.removeEventListener('mousedown', mainPinMousedownHandler);
@@ -35,7 +64,10 @@
     window.filterForm.deactivate();
     window.offerForm.deactivate();
 
-    window.offerForm.fillAddressField(window.mainPin.getLocation());
+    window.pins.hide();
+    window.offerCard.closeCurrent();
+
+    resetOfferLocation();
 
     mainPin.addEventListener('mousedown', mainPinMousedownHandler);
     mainPin.addEventListener('keydown', mainPinKeydownHandler);
@@ -56,13 +88,36 @@
     }
   };
 
-  var notify = function (target, event) {
-    if (event === 'click') {
-      handleClickNotification(target);
+  var handleSubmitNotification = function (target) {
+    if (target === offerForm) {
+      window.backend.save(
+          new FormData(offerForm),
+          saveSuccessHandler,
+          saveErrorHandler
+      );
     }
+  };
 
-    if (event === 'mousemove') {
-      handleMousemoveNotification(target);
+  var handleResetNotification = function (target) {
+    if (target === offerForm) {
+      deactivate();
+    }
+  };
+
+  var notify = function (target, event) {
+    switch (event) {
+      case 'click':
+        handleClickNotification(target);
+        break;
+      case 'mousemove':
+        handleMousemoveNotification(target);
+        break;
+      case 'submit':
+        handleSubmitNotification(target);
+        break;
+      case 'reset':
+        handleResetNotification(target);
+        break;
     }
   };
 

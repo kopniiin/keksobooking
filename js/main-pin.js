@@ -20,6 +20,16 @@
     };
   };
 
+  var setLocation = function (location, havePointer) {
+    mainPin.style.left = location.x + window.constants.mainPinOffsetX + 'px';
+
+    var offsetY = havePointer ?
+      window.constants.mainPinWithPointerOffsetY :
+      window.constants.mainPinWithoutPointerOffsetY;
+
+    mainPin.style.top = location.y + offsetY + 'px';
+  };
+
   var setCoords = function (coords) {
     mainPin.style.left = coords.x + 'px';
     mainPin.style.top = coords.y + 'px';
@@ -89,6 +99,7 @@
   mainPin.addEventListener('mousedown', mainPinMousedownHandler);
 
   window.mainPin = {
-    getLocation: getLocation
+    getLocation: getLocation,
+    setLocation: setLocation
   };
 })();

@@ -13,8 +13,10 @@
   var checkinTimeField = fields.timein;
   var checkoutTimeField = fields.timeout;
 
-  var fillAddressField = function (coords) {
-    addressField.value = coords.x + ', ' + coords.y;
+  var resetButton = form.querySelector('.ad-form__reset');
+
+  var fillAddressField = function (location) {
+    addressField.value = location.x + ', ' + location.y;
   };
 
   var checkTitleFieldValidity = function () {
@@ -90,7 +92,7 @@
     return isFormValid;
   };
 
-  var formInputHandler = function (evt) {
+  var fieldInputHandler = function (evt) {
     if (evt.target === offerTypeField) {
       changePriceFieldMinValidValue();
       return;
@@ -100,24 +102,33 @@
   };
 
   var formSubmitHandler = function (evt) {
-    if (!validateForm()) {
-      evt.preventDefault();
+    evt.preventDefault();
+
+    if (validateForm()) {
+      window.app.notify(form, evt.type);
     }
+  };
+
+  var resetButtonClickHandler = function () {
+    window.app.notify(form, 'reset');
   };
 
   var activate = function () {
     form.classList.remove('ad-form--disabled');
-    form.setAttribute('novalidate', true);
-    form.addEventListener('input', formInputHandler);
+    form.setAttribute('novalidate', 'true');
+    form.addEventListener('input', fieldInputHandler);
     form.addEventListener('submit', formSubmitHandler);
+    resetButton.addEventListener('click', resetButtonClickHandler);
     window.utils.toggleFormFields(form);
   };
 
   var deactivate = function () {
+    form.reset();
     form.classList.add('ad-form--disabled');
-    form.setAttribute('novalidate', false);
-    form.removeEventListener('input', formInputHandler);
+    form.setAttribute('novalidate', 'false');
+    form.removeEventListener('input', fieldInputHandler);
     form.removeEventListener('submit', formSubmitHandler);
+    resetButton.removeEventListener('click', resetButtonClickHandler);
     window.utils.toggleFormFields(form, true);
   };
 
