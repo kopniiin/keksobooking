@@ -3,9 +3,24 @@
 (function () {
   var mainPin = document.querySelector('.map__pin--main');
 
+  var offers = [];
+
+  var saveOffers = function (newOffers) {
+    offers = newOffers;
+  };
+
+  var loadSuccessHandler = function (newOffers) {
+    saveOffers(newOffers);
+    window.pins.render(offers);
+  };
+
+  var loadErrorHandler = function (errorMessage) {
+    window.message.show(errorMessage, true);
+  };
+
   var activate = function () {
     window.map.activate();
-    window.pins.render(window.offersData.get());
+    window.backend.load(loadSuccessHandler, loadErrorHandler);
     window.filterForm.activate();
     window.offerForm.activate();
 
@@ -31,10 +46,7 @@
 
     if (offerIndex) {
       window.offerCard.closeCurrent();
-
-      window.offerCard.show(
-          window.offersData.get()[offerIndex]
-      );
+      window.offerCard.show(offers[offerIndex]);
     }
   };
 

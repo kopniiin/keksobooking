@@ -25,18 +25,12 @@
       !fieldValidity.tooLong;
   };
 
-  var offerTypesToMinPriceMap = {
-    palace: 10000,
-    flat: 1000,
-    house: 5000,
-    bungalo: 0
-  };
-
   var checkPriceFieldValidity = function () {
-    var priceFieldMinValidValue = offerTypesToMinPriceMap[offerTypeField.value];
+    var priceFieldMinValidValue = window.constants.offerTypesToMinPrices[offerTypeField.value];
     var priceFieldValue = parseInt(priceField.value, 10);
 
-    return priceFieldValue >= priceFieldMinValidValue;
+    return priceFieldValue >= priceFieldMinValidValue &&
+      !priceField.validity.rangeOverflow;
   };
 
   var changePriceFieldPlaceholder = function (placeholder) {
@@ -45,7 +39,7 @@
 
   var changePriceFieldMinValidValue = function () {
     changePriceFieldPlaceholder(
-        offerTypesToMinPriceMap[offerTypeField.value]
+        window.constants.offerTypesToMinPrices[offerTypeField.value]
     );
   };
 
@@ -53,15 +47,8 @@
     return checkoutTimeField.value === checkinTimeField.value;
   };
 
-  var roomAmountsToMaxGuestAmountsMap = {
-    1: 1,
-    2: 2,
-    3: 3,
-    100: 0
-  };
-
   var checkGuestAmountFieldValidity = function () {
-    var guestAmountFieldMaxValidValue = roomAmountsToMaxGuestAmountsMap[roomAmountField.value];
+    var guestAmountFieldMaxValidValue = window.constants.roomAmountsToMaxGuestAmounts[roomAmountField.value];
     var guestAmountFieldValue = parseInt(guestAmountField.value, 10);
 
     return guestAmountFieldValue <= guestAmountFieldMaxValidValue;

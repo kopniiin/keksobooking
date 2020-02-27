@@ -8,16 +8,33 @@
 
   var MAP_WIDTH = 1200;
 
-  var OFFER_TITLE = 'Объявление о жилье';
-  var OFFER_DESCRIPTION = 'Хорошее и уютное жилье';
-  var OFFER_MAX_PRICE = 1000000;
-  var OFFER_MAX_ROOM_AMOUNT = 3;
-  var OFFER_MAX_GUEST_AMOUNT = 2;
-
-  var offerMinLocationX = 0;
-  var offerMaxLocationX = MAP_WIDTH;
   var OFFER_MIN_LOCATION_Y = 130;
   var OFFER_MAX_LOCATION_Y = 630;
+
+  var OFFER_PHOTO_WIDTH = 45;
+  var OFFER_PHOTO_HEIGHT = 40;
+  var OFFER_PHOTO_ALT = 'Фотография жилья';
+
+  var offerTypesToMinPrices = {
+    palace: 10000,
+    flat: 1000,
+    house: 5000,
+    bungalo: 0
+  };
+
+  var offerTypesToRussianTranslations = {
+    flat: 'Квартира',
+    bungalo: 'Бунгало',
+    house: 'Дом',
+    palace: 'Дворец'
+  };
+
+  var roomAmountsToMaxGuestAmounts = {
+    1: 1,
+    2: 2,
+    3: 3,
+    100: 0
+  };
 
   var MAIN_PIN_WIDTH = 65;
   var MAIN_PIN_HEIGHT = 65;
@@ -36,39 +53,20 @@
   var PIN_OFFSET_X = -25;
   var PIN_OFFSET_Y = -70;
 
-  var OFFER_TYPES = [
-    'palace',
-    'flat',
-    'house',
-    'bungalo'
-  ];
+  var MAX_PINS_AMOUNT = 5;
 
-  var OFFER_FEATURES = [
-    'wifi',
-    'dishwasher',
-    'parking',
-    'washer',
-    'elevator',
-    'conditioner'
-  ];
+  var SERVER_RESPONSE_TIMEOUT = 10000;
 
-  var OFFER_CHECKIN_CHECKOUT_TIMES = [
-    '12:00',
-    '13:00',
-    '14:00'
-  ];
+  var ServerResponseStatusCode = {
+    OK: 200
+  };
 
-  var OFFER_PHOTOS = [
-    'http://o0.github.io/assets/images/tokyo/hotel1.jpg',
-    'http://o0.github.io/assets/images/tokyo/hotel2.jpg',
-    'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
-  ];
+  var ServerUrl = {
+    LOAD: 'https://js.dump.academy/keksobooking/data',
+    SAVE: 'https://js.dump.academy/keksobooking'
+  };
 
-  var OFFER_AMOUNT = 8;
-
-  var OFFER_PHOTO_WIDTH = 45;
-  var OFFER_PHOTO_HEIGHT = 40;
-  var OFFER_PHOTO_ALT = 'Фотография жилья';
+  var TIME_TO_HIDE_MESSAGE = 10000;
 
   window.constants = {
     enterKey: ENTER_KEY,
@@ -76,33 +74,14 @@
 
     leftMouseButtonNumber: LEFT_MOUSE_BUTTON_NUMBER,
 
-    mapWidth: MAP_WIDTH,
-
-    offerTitle: OFFER_TITLE,
-    offerDescription: OFFER_DESCRIPTION,
-    offerMaxPrice: OFFER_MAX_PRICE,
-    offerMaxRoomAmount: OFFER_MAX_ROOM_AMOUNT,
-    offerMaxGuestAmount: OFFER_MAX_GUEST_AMOUNT,
-    offerTypes: OFFER_TYPES,
-    offerFeatures: OFFER_FEATURES,
-    offerCheckinCheckoutTimes: OFFER_CHECKIN_CHECKOUT_TIMES,
-    offerPhotos: OFFER_PHOTOS,
-    offerAmount: OFFER_AMOUNT,
-
     offerPhotoWidth: OFFER_PHOTO_WIDTH,
     offerPhotoHeight: OFFER_PHOTO_HEIGHT,
     offerPhotoAlt: OFFER_PHOTO_ALT,
 
-    OfferLocationLimits: {
-      MIN_X: offerMinLocationX,
-      MAX_X: offerMaxLocationX,
-      MIN_Y: OFFER_MIN_LOCATION_Y,
-      MAX_Y: OFFER_MAX_LOCATION_Y
-    },
+    offerTypesToMinPrices: offerTypesToMinPrices,
+    offerTypesToRussianTranslations: offerTypesToRussianTranslations,
+    roomAmountsToMaxGuestAmounts: roomAmountsToMaxGuestAmounts,
 
-    mainPinWidth: MAIN_PIN_WIDTH,
-    mainPinHeight: MAIN_PIN_HEIGHT,
-    mainPinPointerHeight: MAIN_PIN_POINTER_HEIGHT,
     mainPinOffsetX: mainPinOffsetX,
     mainPinWithoutPointerOffsetY: mainPinWithoutPointerOffsetY,
     mainPinWithPointerOffsetY: mainPinWithPointerOffsetY,
@@ -115,6 +94,15 @@
     },
 
     pinOffsetX: PIN_OFFSET_X,
-    pinOffsetY: PIN_OFFSET_Y
+    pinOffsetY: PIN_OFFSET_Y,
+
+    maxPinsAmount: MAX_PINS_AMOUNT,
+
+    serverResponseTimeout: SERVER_RESPONSE_TIMEOUT,
+    serverResponseStatusCode: ServerResponseStatusCode,
+
+    serverUrl: ServerUrl,
+
+    timeToHideMessage: TIME_TO_HIDE_MESSAGE
   };
 })();
