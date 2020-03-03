@@ -20,6 +20,8 @@
   var OFFER_PHOTO_HEIGHT = 40;
   var OFFER_PHOTO_ALT = 'Фотография жилья';
 
+  var ANY_FILTER_VALUE = 'any';
+
   var offerTypesToMinPrices = {
     palace: 10000,
     flat: 1000,
@@ -73,8 +75,6 @@
     OK: 200
   };
 
-  var TIME_TO_HIDE_MESSAGE = 10000;
-
   window.constants = {
     enterKey: ENTER_KEY,
     escKey: ESC_KEY,
@@ -86,6 +86,8 @@
     offerPhotoWidth: OFFER_PHOTO_WIDTH,
     offerPhotoHeight: OFFER_PHOTO_HEIGHT,
     offerPhotoAlt: OFFER_PHOTO_ALT,
+
+    anyFilterValue: ANY_FILTER_VALUE,
 
     offerTypesToMinPrices: offerTypesToMinPrices,
     offerTypesToRussianTranslations: offerTypesToRussianTranslations,
@@ -105,8 +107,6 @@
     ServerUrl: ServerUrl,
 
     serverResponseTimeout: SERVER_RESPONSE_TIMEOUT,
-    ServerResponseStatusCode: ServerResponseStatusCode,
-
-    timeToHideMessage: TIME_TO_HIDE_MESSAGE
+    ServerResponseStatusCode: ServerResponseStatusCode
   };
 })();
