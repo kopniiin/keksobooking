@@ -7,8 +7,12 @@
   };
 
   window.offersFilter = function (offers, filters) {
-    return offers.filter(function (offer) {
+    var filteredOffers = offers.filter(function (offer) {
       return checkType(offer.offer.type, filters.type);
     });
+
+    return filteredOffers.length > window.constants.maxPinsAmount ?
+      filteredOffers.slice(0, window.constants.maxPinsAmount) :
+      filteredOffers;
   };
 })();

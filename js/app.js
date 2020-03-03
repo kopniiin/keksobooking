@@ -12,11 +12,19 @@
     offers = newOffers;
   };
 
+  var updatePins = function () {
+    window.pins.update(window.offersFilter(
+        offers,
+        window.filterForm.getFilters()
+    ));
+  };
+
   var loadSuccessHandler = function (newOffers) {
     saveOffers(newOffers);
 
-    window.pins.update(offers);
     window.filterForm.activate();
+
+    updatePins();
   };
 
   var loadErrorHandler = function () {
@@ -49,8 +57,8 @@
       window.backend.load(loadSuccessHandler, loadErrorHandler);
       areOffersLoaded = true;
     } else if (offers.length) {
-      window.pins.update(offers);
       window.filterForm.activate();
+      updatePins();
     }
 
     window.offerForm.activate();
@@ -93,10 +101,7 @@
     if (target === filterForm) {
       window.offerCard.closeCurrent();
 
-      window.pins.update(window.offersFilter(
-          offers,
-          window.filterForm.getFilters()
-      ));
+      updatePins();
     }
   };
 

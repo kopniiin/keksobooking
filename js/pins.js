@@ -51,10 +51,7 @@
   var update = function (offers) {
     hide();
 
-    createPins(offers.length > window.constants.maxPinsAmount ?
-      offers.slice(0, window.constants.maxPinsAmount) :
-      offers
-    );
+    createPins(offers);
 
     render();
   };
