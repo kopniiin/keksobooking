@@ -2,6 +2,7 @@
 
 (function () {
   var mainPin = document.querySelector('.map__pin--main');
+  var filterForm = document.querySelector('.map__filters');
   var offerForm = document.querySelector('.ad-form');
 
   var offers = [];
@@ -14,7 +15,7 @@
   var loadSuccessHandler = function (newOffers) {
     saveOffers(newOffers);
 
-    window.pins.render(offers);
+    window.pins.update(offers);
     window.filterForm.activate();
   };
 
@@ -48,7 +49,7 @@
       window.backend.load(loadSuccessHandler, loadErrorHandler);
       areOffersLoaded = true;
     } else if (offers.length) {
-      window.pins.render(offers);
+      window.pins.update(offers);
       window.filterForm.activate();
     }
 
@@ -88,6 +89,17 @@
     }
   };
 
+  var handleChangeNotification = function (target) {
+    if (target === filterForm) {
+      window.offerCard.closeCurrent();
+
+      window.pins.update(window.offersFilter(
+          offers,
+          window.filterForm.getFilters()
+      ));
+    }
+  };
+
   var handleSubmitNotification = function (target) {
     if (target === offerForm) {
       window.backend.save(
@@ -111,6 +123,9 @@
         break;
       case 'mousemove':
         handleMousemoveNotification(target);
+        break;
+      case 'change':
+        handleChangeNotification(target);
         break;
       case 'submit':
         handleSubmitNotification(target);

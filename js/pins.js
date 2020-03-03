@@ -30,11 +30,7 @@
     });
   };
 
-  var render = function (offers) {
-    if (!pins.length) {
-      createPins(offers);
-    }
-
+  var render = function () {
     var fragment = document.createDocumentFragment();
 
     pins.forEach(function (pin) {
@@ -48,10 +44,23 @@
     pins.forEach(function (pin) {
       pinsContainer.removeChild(pin);
     });
+
+    pins = [];
+  };
+
+  var update = function (offers) {
+    hide();
+
+    createPins(offers.length > window.constants.maxPinsAmount ?
+      offers.slice(0, window.constants.maxPinsAmount) :
+      offers
+    );
+
+    render();
   };
 
   window.pins = {
-    render: render,
+    update: update,
     hide: hide
   };
 })();
