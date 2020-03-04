@@ -57,7 +57,7 @@
   };
 
   window.pins = {
-    update: update,
+    update: window.debounce(update),
     hide: hide
   };
 })();
