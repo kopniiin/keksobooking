@@ -20,6 +20,8 @@
   var OFFER_PHOTO_HEIGHT = 40;
   var OFFER_PHOTO_ALT = 'Фотография жилья';
 
+  var ANY_FILTER_VALUE = 'any';
+
   var offerTypesToMinPrices = {
     palace: 10000,
     flat: 1000,
@@ -62,23 +64,6 @@
 
   var MAX_PINS_AMOUNT = 5;
 
-  var FILTER_ANY_VALUE = 'any';
-
-  var priceFilterValuesToPriceRanges = {
-    'low': {
-      min: 0,
-      max: 9999
-    },
-    'middle': {
-      min: 10000,
-      max: 49999
-    },
-    'high': {
-      min: 50000,
-      max: Infinity
-    }
-  };
-
   var ServerUrl = {
     LOAD: 'https://js.dump.academy/keksobooking/data',
     SAVE: 'https://js.dump.academy/keksobooking'
@@ -89,8 +74,6 @@
   var ServerResponseStatusCode = {
     OK: 200
   };
-
-  var DEBOUNCE_DELAY = 500;
 
   window.constants = {
     enterKey: ENTER_KEY,
@@ -103,6 +86,8 @@
     offerPhotoWidth: OFFER_PHOTO_WIDTH,
     offerPhotoHeight: OFFER_PHOTO_HEIGHT,
     offerPhotoAlt: OFFER_PHOTO_ALT,
+
+    anyFilterValue: ANY_FILTER_VALUE,
 
     offerTypesToMinPrices: offerTypesToMinPrices,
     offerTypesToRussianTranslations: offerTypesToRussianTranslations,
@@ -119,15 +104,9 @@
 
     maxPinsAmount: MAX_PINS_AMOUNT,
 
-    filterAnyValue: FILTER_ANY_VALUE,
-
-    priceFilterValuesToPriceRanges: priceFilterValuesToPriceRanges,
-
     ServerUrl: ServerUrl,
 
     serverResponseTimeout: SERVER_RESPONSE_TIMEOUT,
-    ServerResponseStatusCode: ServerResponseStatusCode,
-
-    debounceDelay: DEBOUNCE_DELAY
+    ServerResponseStatusCode: ServerResponseStatusCode
   };
 })();

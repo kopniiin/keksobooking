@@ -8,19 +8,15 @@
   var offers = [];
   var areOffersLoaded = false;
 
-  var filteredOffers = [];
-
   var saveOffers = function (newOffers) {
     offers = newOffers;
   };
 
   var updatePins = function () {
-    filteredOffers = window.offersFilter(
+    window.pins.update(window.offersFilter(
         offers,
         window.filterForm.getFilters()
-    );
-
-    window.pins.update(filteredOffers);
+    ));
   };
 
   var loadSuccessHandler = function (newOffers) {
@@ -91,7 +87,7 @@
 
     if (offerIndex) {
       window.offerCard.closeCurrent();
-      window.offerCard.show(filteredOffers[offerIndex]);
+      window.offerCard.show(offers[offerIndex]);
     }
   };
 

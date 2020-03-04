@@ -51,10 +51,6 @@
     return mouseButtonNumber === window.constants.leftMouseButtonNumber;
   };
 
-  var checkIfNumInRange = function (num, range) {
-    return num >= range.min && num <= range.max;
-  };
-
   var toggleFormFields = function (form, disable) {
     for (var i = 0; i < form.elements.length; i++) {
       form.elements[i].disabled = Boolean(disable);
@@ -71,8 +67,6 @@
     checkEnterKey: checkEnterKey,
     checkEscKey: checkEscKey,
     checkLeftMouseButton: checkLeftMouseButton,
-
-    checkIfNumInRange: checkIfNumInRange,
 
     toggleFormFields: toggleFormFields
   };
