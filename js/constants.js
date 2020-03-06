@@ -16,8 +16,11 @@
     Y: 408
   };
 
-  var OFFER_PHOTO_WIDTH = 45;
-  var OFFER_PHOTO_HEIGHT = 40;
+  var CARD_PHOTO_WIDTH = 45;
+  var CARD_PHOTO_HEIGHT = 40;
+
+  var OFFER_PHOTO_WIDTH = 40;
+  var OFFER_PHOTO_HEIGHT = 44;
   var OFFER_PHOTO_ALT = 'Фотография жилья';
 
   var offerTypesToMinPrices = {
@@ -92,6 +95,10 @@
 
   var DEBOUNCE_DELAY = 500;
 
+  var ALLOWED_FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
+  var DEFAULT_AVATAR_SRC = 'img/muffin-red.svg';
+
   window.constants = {
     enterKey: ENTER_KEY,
     escKey: ESC_KEY,
@@ -99,6 +106,9 @@
     leftMouseButtonNumber: LEFT_MOUSE_BUTTON_NUMBER,
 
     OfferInitialLocation: OfferInitialLocation,
+
+    cardPhotoWidth: CARD_PHOTO_WIDTH,
+    cardPhotoHeight: CARD_PHOTO_HEIGHT,
 
     offerPhotoWidth: OFFER_PHOTO_WIDTH,
     offerPhotoHeight: OFFER_PHOTO_HEIGHT,
@@ -128,6 +138,10 @@
     serverResponseTimeout: SERVER_RESPONSE_TIMEOUT,
     ServerResponseStatusCode: ServerResponseStatusCode,
 
-    debounceDelay: DEBOUNCE_DELAY
+    debounceDelay: DEBOUNCE_DELAY,
+
+    allowedFileTypes: ALLOWED_FILE_TYPES,
+
+    defaultAvatarSrc: DEFAULT_AVATAR_SRC
   };
 })();

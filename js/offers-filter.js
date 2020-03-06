@@ -26,16 +26,12 @@
   };
 
   window.offersFilter = function (offers, filters) {
-    var filteredOffers = offers.filter(function (offer) {
+    return offers.filter(function (offer) {
       return checkType(offer.offer.type, filters.type) &&
         checkPrice(offer.offer.price, filters.price) &&
         checkAmount(offer.offer.rooms, filters.roomAmount) &&
         checkAmount(offer.offer.guests, filters.guestAmount) &&
         checkFeatures(offer.offer.features, filters.features);
-    });
-
-    return filteredOffers.length > window.constants.maxPinsAmount ?
-      filteredOffers.slice(0, window.constants.maxPinsAmount) :
-      filteredOffers;
+    }).slice(0, window.constants.maxPinsAmount);
   };
 })();

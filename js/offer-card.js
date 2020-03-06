@@ -9,13 +9,12 @@
   };
 
   var createPhotoElement = function (photoSrc) {
-    var photoElement = document.createElement('img');
-    photoElement.src = photoSrc;
-    photoElement.width = window.constants.offerPhotoWidth;
-    photoElement.height = window.constants.offerPhotoHeight;
-    photoElement.alt = window.constants.offerPhotoAlt;
-
-    return photoElement;
+    return window.image.create({
+      width: window.constants.cardPhotoWidth,
+      height: window.constants.cardPhotoHeight,
+      alt: window.constants.offerPhotoAlt,
+      src: photoSrc
+    });
   };
 
   var template = document.querySelector('#card')
