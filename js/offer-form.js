@@ -53,7 +53,7 @@
 
   var hidePhoto = function () {
     photo.style.display = 'none';
-    photo.src = null;
+    photo.removeAttribute('src');
   };
 
   var avatarFieldChangeHandler = function () {
