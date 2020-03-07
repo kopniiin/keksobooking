@@ -13,6 +13,57 @@
   var checkinTimeField = fields.timein;
   var checkoutTimeField = fields.timeout;
 
+  var createPhotoElement = function () {
+    return window.image.create({
+      width: window.constants.offerPhotoWidth,
+      height: window.constants.offerPhotoHeight,
+      alt: window.constants.offerPhotoAlt
+    });
+  };
+
+  var photoContainer = form.querySelector('.ad-form__photo');
+  photoContainer.style.display = 'flex';
+  photoContainer.style.justifyContent = 'center';
+  photoContainer.style.alignItems = 'center';
+
+  var avatar = form.querySelector('.ad-form-header__preview img');
+  var avatarField = fields.avatar;
+
+  var photo = createPhotoElement();
+  var photoField = fields.images;
+
+  photo.style.display = 'none';
+  photoContainer.appendChild(photo);
+
+  var changeAvatar = function () {
+    window.image.show(avatar, avatarField.files[0]);
+  };
+
+  var hideAvatar = function () {
+    avatar.src = window.constants.defaultAvatarSrc;
+  };
+
+  var changePhoto = function () {
+    if (photo.style.display === 'none') {
+      photo.style.display = 'block';
+    }
+
+    window.image.show(photo, photoField.files[0]);
+  };
+
+  var hidePhoto = function () {
+    photo.style.display = 'none';
+    photo.removeAttribute('src');
+  };
+
+  var avatarFieldChangeHandler = function () {
+    changeAvatar();
+  };
+
+  var photoFieldChangeHandler = function () {
+    changePhoto();
+  };
+
   var resetButton = form.querySelector('.ad-form__reset');
 
   var fillAddressField = function (location) {
@@ -118,6 +169,8 @@
     form.setAttribute('novalidate', 'true');
     form.addEventListener('input', fieldInputHandler);
     form.addEventListener('submit', formSubmitHandler);
+    avatarField.addEventListener('change', avatarFieldChangeHandler);
+    photoField.addEventListener('change', photoFieldChangeHandler);
     resetButton.addEventListener('click', resetButtonClickHandler);
     window.utils.toggleFormFields(form);
   };
@@ -128,6 +181,10 @@
     form.setAttribute('novalidate', 'false');
     form.removeEventListener('input', fieldInputHandler);
     form.removeEventListener('submit', formSubmitHandler);
+    hideAvatar();
+    hidePhoto();
+    avatarField.removeEventListener('change', avatarFieldChangeHandler);
+    photoField.removeEventListener('change', photoFieldChangeHandler);
     resetButton.removeEventListener('click', resetButtonClickHandler);
     window.utils.toggleFormFields(form, true);
   };
