@@ -12,7 +12,10 @@
     image.width = parameters.width;
     image.height = parameters.height;
     image.alt = parameters.alt;
-    image.src = parameters.src ? parameters.src : null;
+
+    if (parameters.src) {
+      image.src = parameters.src;
+    }
 
     return image;
   };
