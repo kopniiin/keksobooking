@@ -83,8 +83,8 @@
   };
 
   var ServerUrl = {
-    LOAD: 'https://js.dump.academy/keksobooking/data',
-    SAVE: 'https://js.dump.academy/keksobooking'
+    LOAD: 'https://javascript.pages.academy/keksobooking/data',
+    SAVE: 'https://javascript.pages.academy/keksobooking'
   };
 
   var SERVER_RESPONSE_TIMEOUT = 10000;
